@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Licor Café de Las Horas — El origen del Agua de Valencia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --naranja:#D9622B;
+    --crema:#F6EFE4;
+    --crema-2:#EFE5D3;
+    --negro:#1C1A17;
+    --verde:#4B5A45;
+    --dorado:#C9A15A;
+    --serif:'Fraunces', serif;
+    --sans:'Inter', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:var(--sans);
+    background:var(--crema);
+    color:var(--negro);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  img{max-width:100%; display:block;}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1240px; margin:0 auto; padding:0 32px;}
+  h1,h2,h3{font-family:var(--serif); font-weight:500; line-height:1.08; letter-spacing:-0.01em;}
+  .eyebrow{
+    font-family:var(--sans); font-size:11px; letter-spacing:0.22em; text-transform:uppercase;
+    color:var(--naranja); font-weight:600; margin-bottom:18px; display:block;
+  }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    padding:15px 32px; font-size:13px; letter-spacing:0.08em; text-transform:uppercase;
+    font-weight:600; border-radius:2px; transition:all .25s ease; cursor:pointer; border:1px solid transparent;
+  }
+  .btn-solid{background:var(--negro); color:var(--crema);}
+  .btn-solid:hover{background:var(--naranja);}
+  .btn-outline{border-color:rgba(28,26,23,0.35); color:var(--negro);}
+  .btn-outline:hover{border-color:var(--negro); background:var(--negro); color:var(--crema);}
+  .btn-outline.on-dark{border-color:rgba(246,239,228,0.55); color:var(--crema);}
+  .btn-outline.on-dark:hover{background:var(--crema); color:var(--negro);}
+  .btn-solid.on-dark{background:var(--crema); color:var(--negro);}
+  .btn-solid.on-dark:hover{background:var(--naranja); color:var(--crema);}
+
+  section{padding:120px 0;}
+  @media(max-width:768px){ section{padding:72px 0;} .wrap{padding:0 20px;} }
+
+  .fade{opacity:0; transform:translateY(28px); transition:opacity .9s ease, transform .9s ease;}
+  .fade.in{opacity:1; transform:translateY(0);}
+
+  /* HEADER */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 40px; transition:background .3s ease, padding .3s ease, box-shadow .3s ease;
+  }
+  header.scrolled{background:rgba(246,239,228,0.94); backdrop-filter:blur(6px); padding:14px 40px; box-shadow:0 1px 0 rgba(28,26,23,0.08);}
+  header .logo-mark{display:flex; align-items:center; gap:10px;}
+  header .logo-mark img{height:38px; width:auto; filter:brightness(0) invert(1); transition:filter .3s ease;}
+  header.scrolled .logo-mark img{filter:none;}
+  header .logo-word{font-family:var(--serif); font-size:18px; letter-spacing:0.04em; color:#fff; transition:color .3s ease;}
+  header.scrolled .logo-word{color:var(--negro);}
+  nav{display:flex; gap:34px; align-items:center;}
+  nav a{font-size:12.5px; letter-spacing:0.06em; text-transform:uppercase; color:#fff; font-weight:500; transition:color .3s ease; opacity:.92;}
+  header.scrolled nav a{color:var(--negro);}
+  nav a:hover{color:var(--dorado);}
+  .nav-icons{display:flex; gap:20px; align-items:center;}
+  .nav-icons a{color:#fff; transition:color .3s ease;}
+  header.scrolled .nav-icons a{color:var(--negro);}
+  .menu-toggle{display:none; background:none; border:none; color:#fff; font-size:22px; cursor:pointer;}
+  header.scrolled .menu-toggle{color:var(--negro);}
+  @media(max-width:920px){
+    nav{display:none;}
+    .menu-toggle{display:block;}
+    header{padding:18px 20px;}
+  }
+
+  /* HERO */
+  .hero{
+    position:relative; height:100vh; min-height:640px; max-height:920px; display:flex; align-items:center;
+    background:
+      linear-gradient(90deg, rgba(12,10,8,0.82) 0%, rgba(12,10,8,0.58) 40%, rgba(12,10,8,0.22) 75%, rgba(12,10,8,0.1) 100%),
+      linear-gradient(180deg, rgba(12,10,8,0.35) 0%, rgba(12,10,8,0.05) 35%, rgba(12,10,8,0.1) 65%, rgba(12,10,8,0.6) 100%),
+      url('assets/hero-beach.jpg') center 30%/cover no-repeat;
+  }
+  .hero-inner{padding-top:70px; padding-bottom:70px; color:#fff; position:relative; z-index:2;}
+  .hero .eyebrow{color:var(--dorado); text-shadow:0 2px 16px rgba(0,0,0,0.45);}
+  .hero h1{font-size:clamp(34px,4.4vw,58px); color:#fff; max-width:760px; text-wrap:balance; text-shadow:0 4px 24px rgba(0,0,0,0.4);}
+  .hero p{font-family:var(--sans); font-size:16px; line-height:1.7; max-width:460px; margin:24px 0 34px; color:rgba(255,255,255,0.92); font-weight:300; text-shadow:0 2px 16px rgba(0,0,0,0.4);}
+  .hero .cta-row{display:flex; gap:16px; flex-wrap:wrap;}
+  .scroll-cue{position:absolute; bottom:28px; left:50%; transform:translateX(-50%); z-index:2; color:#fff; opacity:.75; font-size:11px; letter-spacing:.15em; text-transform:uppercase; display:flex; flex-direction:column; align-items:center; gap:8px;}
+  .scroll-cue .line{width:1px; height:34px; background:rgba(255,255,255,0.6); animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:.3} 50%{opacity:1}}
+
+  /* SECTION: aclaracion */
+  .split{display:grid; grid-template-columns:1.1fr 0.9fr; gap:80px; align-items:center;}
+  @media(max-width:860px){ .split{grid-template-columns:1fr; gap:44px;} }
+  .split h2{font-size:clamp(28px,3.6vw,42px); margin-bottom:26px;}
+  .split p{font-size:16.5px; line-height:1.75; color:#3a362f; font-weight:300; margin-bottom:16px; max-width:480px;}
+  .product-frame{position:relative; display:flex; justify-content:center; padding:20px 0;}
+  .product-frame::before{
+    content:""; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:78%; aspect-ratio:1; border-radius:50%;
+    background:radial-gradient(circle, rgba(201,161,90,0.22) 0%, rgba(217,98,43,0.07) 45%, transparent 70%);
+  }
+  .product-frame img{
+    position:relative; max-height:620px; width:auto;
+    filter:drop-shadow(0 34px 46px rgba(28,26,23,0.30));
+    animation:float 7s ease-in-out infinite;
+  }
+  @keyframes float{0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)}}
+  @media(prefers-reduced-motion:reduce){ .product-frame img{animation:none;} }
+
+  /* HISTORIA banda */
+  .historia{
+    position:relative; color:#fff; min-height:560px; display:flex; align-items:center;
+    background:linear-gradient(90deg, rgba(20,16,12,0.86) 0%, rgba(20,16,12,0.55) 55%, rgba(20,16,12,0.25) 100%), url('assets/historia-cafe.jpg') center/cover no-repeat;
+  }
+  .historia .wrap{max-width:1240px;}
+  .historia-content{max-width:560px;}
+  .historia .eyebrow{color:var(--dorado);}
+  .historia h2{font-size:clamp(28px,3.6vw,44px); color:#fff; margin-bottom:24px;}
+  .historia p{font-size:16.5px; line-height:1.8; color:rgba(255,255,255,0.86); font-weight:300; margin-bottom:14px; max-width:480px;}
+  .historia .stats{display:flex; gap:44px; margin-top:38px;}
+  .historia .stat b{font-family:var(--serif); font-size:34px; display:block; color:var(--dorado);}
+  .historia .stat span{font-size:11px; letter-spacing:.08em; text-transform:uppercase; opacity:.75;}
+
+  /* RECETA */
+  .receta-block{background:var(--negro); color:var(--crema); border-radius:8px; padding:64px; display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;}
+  @media(max-width:860px){ .receta-block{grid-template-columns:1fr; padding:40px 28px;} }
+  .receta-block .eyebrow{color:var(--dorado);}
+  .receta-block h2{color:var(--crema); font-size:clamp(26px,3.2vw,38px); margin-bottom:22px;}
+  .recipe-list{list-style:none; margin:26px 0 32px;}
+  .recipe-list li{
+    display:flex; justify-content:space-between; padding:14px 0; border-bottom:1px solid rgba(246,239,228,0.14);
+    font-size:15px; font-weight:300;
+  }
+  .recipe-list li b{font-weight:500; font-family:var(--serif); font-size:16px;}
+  .glass-ill{display:flex; justify-content:center;}
+  .glass-ill svg{width:100%; max-width:280px; height:auto;}
+  .recipe-video{border-radius:6px; overflow:hidden; box-shadow:0 30px 60px -20px rgba(0,0,0,0.5); background:#000;}
+  .recipe-video video{width:100%; display:block; max-height:520px; object-fit:cover;}
+
+  /* RECETARIO GRID */
+  .section-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:52px; gap:24px; flex-wrap:wrap;}
+  .section-head h2{font-size:clamp(28px,3.6vw,42px);}
+  .rec-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:22px;}
+  @media(max-width:920px){ .rec-grid{grid-template-columns:repeat(2,1fr);} }
+  @media(max-width:560px){ .rec-grid{grid-template-columns:1fr;} }
+  .rec-card{display:block; background:#fff; border-radius:4px; overflow:hidden; transition:transform .35s ease, box-shadow .35s ease;}
+  .rec-card:hover{transform:translateY(-6px); box-shadow:0 30px 50px -25px rgba(28,26,23,0.25);}
+  .rec-thumb{height:230px; display:flex; align-items:flex-end; padding:22px; font-family:var(--serif); font-size:15px; letter-spacing:.02em; color:rgba(255,255,255,0.92); position:relative; overflow:hidden;}
+  .rec-thumb::after{
+    content:""; position:absolute; inset:0;
+    background:radial-gradient(ellipse at 30% 25%, rgba(255,255,255,0.28), transparent 60%);
+  }
+  .rec-thumb span{position:relative; z-index:2; font-style:italic; opacity:.9;}
+  .rec-card:nth-child(1) .rec-thumb{background:linear-gradient(160deg,#F3A96B,#D9622B);}
+  .rec-card:nth-child(2) .rec-thumb{background:linear-gradient(160deg,#E7C08B,#C9A15A);}
+  .rec-card:nth-child(3) .rec-thumb{background:linear-gradient(160deg,#8a2f22,#c0432b);}
+  .rec-card:nth-child(4) .rec-thumb{background:linear-gradient(160deg,#7d8a72,#4B5A45);}
+  .rec-card:nth-child(5) .rec-thumb{background:linear-gradient(160deg,#e8b4b8,#c96b78);}
+  .rec-card:nth-child(6) .rec-thumb{background:linear-gradient(160deg,#d8c08a,#a98a4c);}
+  .rec-body{padding:20px 22px 26px;}
+  .rec-body .tag{font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--naranja); font-weight:600;}
+  .rec-body h3{font-size:19px; margin:8px 0 6px;}
+  .rec-body p{font-size:13.5px; color:#6b6559; font-weight:300; line-height:1.5;}
+
+  /* PROFESIONALES split */
+  .pro-grid{display:grid; grid-template-columns:1fr 1fr;}
+  @media(max-width:820px){ .pro-grid{grid-template-columns:1fr;} }
+  .pro-card{
+    position:relative; min-height:460px; padding:56px; display:flex; flex-direction:column; justify-content:flex-end; color:#fff; overflow:hidden;
+  }
+  .pro-card.restaurantes{background:linear-gradient(160deg, rgba(28,26,23,0.2), rgba(28,26,23,0.78)), linear-gradient(150deg,#3a3126,#1C1A17);}
+  .pro-card.distribuidores{background:linear-gradient(160deg, rgba(28,26,23,0.2), rgba(28,26,23,0.82)), linear-gradient(150deg,#5a2f1c,#2b1a10);}
+  .pro-card .eyebrow{color:var(--dorado);}
+  .pro-card h3{font-size:clamp(24px,2.8vw,32px); color:#fff; margin-bottom:16px; max-width:340px;}
+  .pro-card p{font-size:14.5px; font-weight:300; opacity:.82; max-width:360px; margin-bottom:28px; line-height:1.6;}
+
+  /* TIENDA */
+  .shop-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:22px;}
+  @media(max-width:920px){ .shop-grid{grid-template-columns:repeat(2,1fr);} }
+  @media(max-width:560px){ .shop-grid{grid-template-columns:1fr;} }
+  .shop-card{background:#fff; border-radius:4px; overflow:hidden; position:relative; transition:transform .35s ease, box-shadow .35s ease;}
+  .shop-card:hover{transform:translateY(-5px); box-shadow:0 28px 46px -26px rgba(28,26,23,0.28);}
+  .shop-card .badge{position:absolute; top:16px; left:16px; background:transparent; color:var(--naranja); border:1px solid var(--naranja); font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; padding:5px 10px; border-radius:2px; font-weight:600; z-index:2;}
+  .shop-img{height:320px; background:radial-gradient(ellipse at 50% 55%, rgba(201,161,90,0.16), transparent 62%); display:flex; align-items:center; justify-content:center; padding:26px 18px;}
+  .shop-img img{max-height:100%; width:auto; filter:drop-shadow(0 22px 26px rgba(28,26,23,0.22)); transition:transform .5s ease;}
+  .shop-card:hover .shop-img img{transform:scale(1.05);}
+  .shop-body{padding:22px 24px 26px; border-top:1px solid rgba(28,26,23,0.07);}
+  .shop-body h3{font-size:17px; margin-bottom:8px; font-weight:400;}
+  .shop-body .price{font-family:var(--serif); font-size:19px; color:var(--naranja); margin-bottom:16px;}
+  .shop-body .price s{color:#a8a294; font-size:13.5px; margin-left:9px; font-family:var(--sans); font-weight:300;}
+
+  /* DÓNDE ENCONTRARLO */
+  .venues{background:var(--verde); color:#fff; padding:110px 0;}
+  .venues .section-head h2{color:#fff;}
+  .venues .eyebrow{color:var(--dorado);}
+  .venues .section-head p{font-weight:300; opacity:.75; max-width:400px; font-size:14.5px; line-height:1.65;}
+  .venue-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:0 64px;}
+  @media(max-width:760px){ .venue-grid{grid-template-columns:1fr; gap:0;} }
+  .venue-item{
+    display:flex; justify-content:space-between; align-items:baseline; gap:20px;
+    padding:24px 0; border-bottom:1px solid rgba(255,255,255,0.16);
+    transition:padding-left .3s ease, border-color .3s ease;
+  }
+  .venue-item:hover{padding-left:10px; border-color:var(--dorado);}
+  .venue-item h3{font-size:19px; color:#fff; font-weight:400; letter-spacing:0;}
+  .venue-item span{font-size:12.5px; color:rgba(255,255,255,0.6); font-weight:300; text-align:right; flex-shrink:0;}
+
+  /* PRESENCIA INTERNACIONAL */
+  .world{text-align:center;}
+  .world .eyebrow{display:block; text-align:center;}
+  .world h2{max-width:600px; margin:0 auto 40px;}
+  .world-row{display:flex; flex-wrap:wrap; justify-content:center; gap:0; font-family:var(--serif); font-size:clamp(17px,2.2vw,24px);}
+  .world-row span{padding:0 22px; position:relative; color:var(--negro);}
+  .world-row span.origin{color:var(--naranja); font-weight:500;}
+  .world-row span:not(:last-child)::after{content:"·"; position:absolute; right:-3px; color:var(--dorado);}
+
+  /* NEWSLETTER */
+  .newsletter{background:var(--negro); color:var(--crema); text-align:center;}
+  .newsletter h2{color:var(--crema); font-size:clamp(26px,3.4vw,40px); max-width:640px; margin:0 auto 16px;}
+  .newsletter p{font-weight:300; opacity:.75; max-width:480px; margin:0 auto 34px;}
+  .nl-form{display:flex; max-width:440px; margin:0 auto; gap:10px;}
+  .nl-form input{flex:1; padding:15px 18px; border-radius:2px; border:1px solid rgba(246,239,228,0.3); background:transparent; color:#fff; font-size:14px;}
+  .nl-form input::placeholder{color:rgba(246,239,228,0.5);}
+  .nl-gift{margin-top:22px; font-size:12.5px; opacity:.6; letter-spacing:.02em;}
+
+  footer{background:var(--crema-2); padding:70px 0 30px;}
+  .foot-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:40px; padding-bottom:50px; border-bottom:1px solid rgba(28,26,23,0.1);}
+  @media(max-width:760px){ .foot-grid{grid-template-columns:1fr 1fr; row-gap:36px;} }
+  .foot-grid img{height:84px; margin-bottom:14px;}
+  .foot-grid p{font-size:13.5px; color:#6b6559; max-width:220px; line-height:1.6;}
+  .foot-col h4{font-size:11px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:16px; color:var(--negro);}
+  .foot-col a{display:block; font-size:13.5px; color:#5c5748; margin-bottom:10px;}
+  .foot-col a:hover{color:var(--naranja);}
+  .foot-bottom{display:flex; justify-content:space-between; padding-top:24px; font-size:12px; color:#8a8474; flex-wrap:wrap; gap:12px;}
+
+  .proto-flag{
+    position:fixed; bottom:18px; right:18px; z-index:200; background:var(--negro); color:var(--crema);
+    font-size:11px; letter-spacing:.05em; padding:10px 16px; border-radius:30px; opacity:.88; font-family:var(--sans);
+    box-shadow:0 10px 30px rgba(0,0,0,0.25);
+  }
+</style>
+</head>
+<body>
+
+<div class="proto-flag">Prototipo de dirección de arte — no es la web final</div>
+
+<header id="siteHeader">
+  <a href="#top" class="logo-mark">
+    <img src="assets/logo.png" alt="Licor Café de Las Horas">
+    <span class="logo-word">Licor Café de Las Horas</span>
+  </a>
+  <nav>
+    <a href="#licor">El Licor</a>
+    <a href="#agua-de-valencia">Agua de Valencia</a>
+    <a href="#recetas">Recetas</a>
+    <a href="#profesionales">Profesionales</a>
+    <a href="#tienda">Tienda</a>
+  </nav>
+  <div class="nav-icons">
+    <a href="#" aria-label="Buscar">🔍</a>
+    <a href="#" aria-label="Carrito">🛒</a>
+  </div>
+  <button class="menu-toggle" aria-label="Menú">☰</button>
+</header>
+
+<section class="hero" id="top">
+  <div class="wrap hero-inner">
+    <span class="eyebrow fade">El origen del Agua de Valencia</span>
+    <h1 class="fade">30 años de historia, resumidos en un solo licor.</h1>
+    <p class="fade">Nacido para la auténtica Agua de Valencia. Creado para inspirar mucho más.</p>
+    <div class="cta-row fade">
+      <a href="#tienda" class="btn btn-solid on-dark">Comprar</a>
+      <a href="#agua-de-valencia" class="btn btn-outline on-dark">Descubrir la historia</a>
+    </div>
+  </div>
+  <div class="scroll-cue"><span>Descubre</span><span class="line"></span></div>
+</section>
+
+<section id="licor">
+  <div class="wrap split">
+    <div class="fade">
+      <span class="eyebrow">El Licor</span>
+      <h2>El secreto de nuestra Agua de Valencia.</h2>
+      <p>Naranja y mandarina maceradas con sus aceites esenciales y notas de cáscara seca. Y, como toque final, una sorpresa de hierbas de monte: albahaca y menta. Casi treinta años de ensayo y perfeccionamiento hasta encontrar la fórmula que convierte el Agua de Valencia en una bebida irresistible.</p>
+      <p>Hasta la etiqueta cuenta la historia: azahar y peonía, los azules del mar y el cielo de Sorolla, y una caligrafía inspirada en los Libros de Horas medievales — los mismos que dan nombre a nuestro origen, la histórica Café de Las Horas de Valencia.</p>
+      <a href="#" class="btn btn-outline" style="margin-top:12px;">Conoce el licor →</a>
+    </div>
+    <div class="product-frame fade">
+      <img src="assets/bottle.png" alt="Botella Licor Café de Las Horas">
+    </div>
+  </div>
+</section>
+
+<section class="venues">
+  <div class="wrap">
+    <div class="section-head fade">
+      <div>
+        <span class="eyebrow">Dónde encontrarlo</span>
+        <h2>Dónde probarlo en Valencia</h2>
+      </div>
+      <p>Estos son algunos de los locales donde ya sirven Café de Las Horas y la auténtica Agua de Valencia.</p>
+    </div>
+    <div class="venue-grid fade">
+      <div class="venue-item"><h3>Café de Las Horas</h3><span>El Carmen · C/ Almodóvar, 1</span></div>
+      <div class="venue-item"><h3>El Corte Inglés · Club del Gourmet</h3><span>Pintor Sorolla · Colón · Nuevo Centro · Av. Francia</span></div>
+      <div class="venue-item"><h3>Barecito by Gastroadictos</h3><span>Pl. Ayuntamiento · C/ Cotanda, 4</span></div>
+      <div class="venue-item"><h3>Cremaet</h3><span>Camins al Grau · Av. del Port, 20</span></div>
+      <div class="venue-item"><h3>Praia Beach Bar</h3><span>La Patacona · Alboraya</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="historia" id="historia">
+  <div class="wrap">
+    <div class="historia-content fade">
+      <span class="eyebrow">Treinta años. Una ciudad. Un ritual.</span>
+      <h2>Nuestra historia comenzó en 1994, cuando abrimos el Café de Las Horas, en Valencia.</h2>
+      <p>Desde entonces, el Agua de Valencia se convirtió en nuestra carta de presentación: la bebida con la que miles de personas han brindado, elaborada con nuestra exquisita receta, esa naranja y ese azahar valenciano de siempre.</p>
+      <p>Esto no es una startup de bebidas. Es una tradición que decidimos embotellar.</p>
+      <a href="#" class="btn btn-outline on-dark" style="margin-top:8px;">Leer la historia completa →</a>
+      <div class="stats">
+        <div class="stat"><b>30</b><span>Años de historia</span></div>
+        <div class="stat"><b>1</b><span>Receta, sin cambios</span></div>
+        <div class="stat"><b>Valencia</b><span>Origen y elaboración</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="agua-de-valencia">
+  <div class="wrap">
+    <div class="receta-block fade">
+      <div>
+        <span class="eyebrow">La receta que todos quieren</span>
+        <h2>Y nadie puede igualar.</h2>
+        <ul class="recipe-list">
+          <li><span>Licor CDLH</span><b>1 parte</b></li>
+          <li><span>Cava brut</span><b>1 parte</b></li>
+          <li><span>Zumo de naranja natural</span><b>2 partes</b></li>
+          <li><span>Hielo, copa ancha, rodaja de naranja</span><b>—</b></li>
+        </ul>
+        <div class="cta-row">
+          <a href="#" class="btn btn-solid on-dark">Ver receta paso a paso</a>
+          <a href="#recipe-video" class="btn btn-outline on-dark">Ver el vídeo</a>
+        </div>
+      </div>
+      <div class="recipe-video" id="recipe-video">
+        <video controls preload="metadata" playsinline>
+          <source src="assets/agua-de-valencia-video.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="recetas">
+  <div class="wrap">
+    <div class="section-head fade">
+      <h2>Más allá del<br>Agua de Valencia</h2>
+      <a href="#" class="btn btn-outline">Ver todas las recetas →</a>
+    </div>
+    <div class="rec-grid fade">
+      <a class="rec-card" href="recetas/agua-de-valencia.html"><div class="rec-thumb"><span>Agua de Valencia</span></div><div class="rec-body"><span class="tag">Refrescante</span><h3>Agua de Valencia</h3><p>Licor · Cava · Zumo de naranja</p></div></a>
+      <a class="rec-card" href="recetas/horas-spritz.html"><div class="rec-thumb"><span>Horas Spritz</span></div><div class="rec-body"><span class="tag">Clásica</span><h3>Horas Spritz</h3><p>Licor · Campari · Soda · Cava</p></div></a>
+      <a class="rec-card" href="recetas/horas-negroni.html"><div class="rec-thumb"><span>Horas Negroni</span></div><div class="rec-body"><span class="tag">Amargo</span><h3>Horas Negroni</h3><p>Licor · Campari · Vermut rojo</p></div></a>
+      <a class="rec-card" href="recetas/horas-sour.html"><div class="rec-thumb"><span>Horas Sour</span></div><div class="rec-body"><span class="tag">Elegante</span><h3>Horas Sour</h3><p>Licor · Clara de huevo · Limón</p></div></a>
+      <a class="rec-card" href="recetas/rose-spritz.html"><div class="rec-thumb"><span>Rose Spritz</span></div><div class="rec-body"><span class="tag">Moderno</span><h3>Rose Spritz</h3><p>Licor · Sirope de rosas · Lima</p></div></a>
+      <a class="rec-card" href="recetas/citrus-beer-mojito.html"><div class="rec-thumb"><span>Citrus Beer Mojito</span></div><div class="rec-body"><span class="tag">Aperitivo</span><h3>Citrus Beer Mojito</h3><p>Licor · Lima · Hierbabuena · Cerveza</p></div></a>
+    </div>
+  </div>
+</section>
+
+<section id="profesionales" style="padding:0;">
+  <div class="pro-grid fade">
+    <div class="pro-card restaurantes">
+      <span class="eyebrow">Restaurantes y bares</span>
+      <h3>Tu Agua de Valencia, siempre igual de buena.</h3>
+      <p>Calidad idéntica en cada copa, formación de barra en 5 minutos y mejor margen que preparar con licores sueltos.</p>
+      <a href="#" class="btn btn-solid on-dark">Quiero vender Agua de Valencia by Café de Las Horas →</a>
+    </div>
+    <div class="pro-card distribuidores">
+      <span class="eyebrow">Distribuidores</span>
+      <h3>Llevamos Valencia a tu país.</h3>
+      <p>Condiciones de exportación, mercados abiertos y soporte comercial para llevar el origen del Agua de Valencia by Café de Las Horas a tu mercado.</p>
+      <a href="#" class="btn btn-outline on-dark">Solicitar información comercial →</a>
+    </div>
+  </div>
+</section>
+
+<section id="tienda">
+  <div class="wrap">
+    <div class="section-head fade">
+      <h2>Llévatelo a casa</h2>
+      <a href="#" class="btn btn-outline">Ver toda la tienda →</a>
+    </div>
+    <div class="shop-grid fade">
+      <div class="shop-card">
+        <span class="badge">Más vendido</span>
+        <div class="shop-img"><img src="assets/bottle.png" alt="Botella 700ml"></div>
+        <div class="shop-body"><h3>Botella 700ml</h3><div class="price">25,00 €</div><a href="#" class="btn btn-outline" style="width:100%; padding:12px;">Añadir</a></div>
+      </div>
+      <div class="shop-card">
+        <div class="shop-img"><img src="assets/bottle.png" alt="Pack 3 botellas"></div>
+        <div class="shop-body"><h3>Pack 3 botellas</h3><div class="price">67,50 €<s>75,00 €</s></div><a href="#" class="btn btn-outline" style="width:100%; padding:12px;">Añadir</a></div>
+      </div>
+      <div class="shop-card">
+        <div class="shop-img"><img src="assets/bottle.png" alt="Pack 6 botellas"></div>
+        <div class="shop-body"><h3>Pack 6 botellas</h3><div class="price">127,50 €<s>150,00 €</s></div><a href="#" class="btn btn-outline" style="width:100%; padding:12px;">Añadir</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="world">
+  <div class="wrap fade">
+    <span class="eyebrow">Presencia internacional</span>
+    <h2>Embajadores de Valencia junto al Ayuntamiento (Visit Valencia)</h2>
+    <div class="world-row">
+      <span class="origin">Valencia</span>
+      <span>Marsella</span>
+      <span>Lyon</span>
+      <span>Milán</span>
+      <span>Bucarest</span>
+      <span>Hong Kong</span>
+      <span>Copenhague</span>
+      <span>Iasi (Rumanía)</span>
+    </div>
+  </div>
+</section>
+
+<section class="newsletter">
+  <div class="wrap fade">
+    <h2>La receta nunca cambia. Tu bandeja de entrada, sí.</h2>
+    <p>Recetas, historia y novedades de Valencia. Sin spam. Una vez al mes.</p>
+    <form class="nl-form" onsubmit="return false;">
+      <input type="email" placeholder="Tu email">
+      <button class="btn btn-solid on-dark" type="submit">Suscribirme</button>
+    </form>
+    <div class="nl-gift">Regalo: guía descargable "Agua de Valencia: la guía definitiva"</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <img src="assets/logo.png" alt="Licor Café de Las Horas">
+      </div>
+      <div class="foot-col">
+        <h4>Marca</h4>
+        <a href="#licor">El Licor</a>
+        <a href="#historia">Historia</a>
+        <a href="#recetas">Recetas</a>
+        <a href="#tienda">Tienda</a>
+      </div>
+      <div class="foot-col">
+        <h4>Profesionales</h4>
+        <a href="#">Restaurantes</a>
+        <a href="#">Distribuidores</a>
+        <a href="#">Dónde comprar</a>
+      </div>
+      <div class="foot-col">
+        <h4>Contacto</h4>
+        <a href="#">Calle Botànic 16, Valencia</a>
+        <a href="#">lashorasvlc@yahoo.es</a>
+        <a href="#">Instagram @cafedelashoras</a>
+        <a href="#">Pedidos: +34 619 24 04 02</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Mrik Drinks, S.L. — Hecho en Valencia</span>
+      <span>Bebe con moderación. Venta a mayores de 18 años.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  });
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+  }, {threshold:0.15});
+  document.querySelectorAll('.fade').forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>

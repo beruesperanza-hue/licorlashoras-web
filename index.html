@@ -7,6 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script>
+  try{
+    if(!sessionStorage.getItem('introSeen') && !matchMedia('(prefers-reduced-motion:reduce)').matches){
+      document.documentElement.classList.add('intro-on');
+    }
+  }catch(e){}
+</script>
 <style>
   :root{
     --naranja:#D9622B;
@@ -81,6 +88,38 @@
     .menu-toggle{display:block;}
     header{padding:18px 20px;}
   }
+
+
+  /* INTRO delicada — botella sobre crema, flores como una filigrana suave en los bordes, se disuelve sobre la web */
+  .intro{display:none; position:fixed; inset:0; z-index:1000; overflow:hidden; align-items:center; justify-content:center; flex-direction:column; background:#f6efe4;
+    transition:opacity 1.2s ease; }
+  html.intro-on .intro{display:flex;}
+  html.intro-on{overflow:hidden;}
+  .intro-flores{position:absolute; inset:-3%; background:url(assets/patron-flores.webp) center/clamp(200px,24vw,300px) repeat; opacity:0; filter:saturate(.75);
+    -webkit-mask-image:radial-gradient(ellipse 46% 52% at 50% 50%, transparent 30%, #000 100%); mask-image:radial-gradient(ellipse 46% 52% at 50% 50%, transparent 30%, #000 100%);
+    animation:floresIn 2.4s ease-out .1s forwards, floresDrift 8s ease-out .1s forwards;}
+  .intro-bottle-wrap{position:relative; z-index:2; display:inline-block; height:min(44vh,420px); opacity:0; transform:translateY(26px);
+    animation:introRise 1.6s cubic-bezier(.2,.7,.2,1) .5s forwards;}
+  .intro-bottle{display:block; height:100%; width:auto; filter:drop-shadow(0 14px 16px rgba(80,50,20,.22));}
+  .intro-bottle-wrap::after{content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(105deg, transparent 38%, rgba(255,255,255,.4) 50%, transparent 62%) -150% 0/250% 100% no-repeat;
+    -webkit-mask:url(assets/bottle-hd.webp) center/contain no-repeat; mask:url(assets/bottle-hd.webp) center/contain no-repeat;
+    animation:introShine 1.4s ease-in-out 1.9s forwards;}
+  .intro-line{position:relative; z-index:2; margin-top:26px; height:1px; width:0; background:#b58b3c; animation:lineGrow 1s ease 1.6s forwards;}
+  .intro-name{position:relative; z-index:2; margin-top:16px; font-family:var(--sans); font-size:10.5px; font-weight:500; letter-spacing:.34em; text-transform:uppercase; color:#6b4a24; opacity:0; animation:introText 1.2s ease 1.9s forwards;}
+  .intro-skip{position:absolute; z-index:3; top:24px; right:26px; background:none; border:0; color:rgba(90,60,30,.55); font:11px var(--sans); letter-spacing:.15em; text-transform:uppercase; cursor:pointer; opacity:0; animation:introText .6s ease 1.2s forwards;}
+  .intro.leaving{opacity:0; pointer-events:none;}
+  .intro.leaving .intro-bottle-wrap{transform:translateY(-10px) scale(1.04); transition:transform 1.2s ease;}
+  @keyframes floresIn{to{opacity:.4;}}
+  @keyframes floresDrift{from{transform:scale(1.07);} to{transform:scale(1);}}
+  @keyframes introRise{to{opacity:1; transform:translateY(0);}}
+  @keyframes introShine{to{background-position:250% 0;}}
+  @keyframes lineGrow{to{width:56px;}}
+  @keyframes introText{to{opacity:1;}}
+  /* hero: entrada escalonada tras la intro + zoom lento de fondo */
+  .hero .fade{transition-duration:1.1s;}
+  .hero .eyebrow.fade{transition-delay:.05s;} .hero h1.fade{transition-delay:.2s;} .hero p.fade{transition-delay:.4s;} .hero .cta-row.fade{transition-delay:.6s;}
+  @media(prefers-reduced-motion:reduce){ .intro{display:none !important;} }
 
   /* HERO */
   .hero{
@@ -228,6 +267,32 @@
   .world-row span:not(:last-child)::after{content:"·"; position:absolute; right:-3px; color:var(--dorado);}
 
   /* NEWSLETTER */
+  /* PEDIDO — formulario dentro de la página, sale por WhatsApp */
+  .order-overlay{display:none; position:fixed; inset:0; z-index:900; background:rgba(20,17,13,.6); align-items:center; justify-content:center; padding:24px;}
+  .order-overlay.open{display:flex;}
+  .order-modal{background:var(--crema); width:100%; max-width:460px; max-height:88vh; overflow-y:auto; border-radius:6px; padding:40px 36px; position:relative; box-shadow:0 40px 80px -20px rgba(0,0,0,.4);}
+  .order-close{position:absolute; top:16px; right:16px; width:34px; height:34px; border:0; background:none; font-size:20px; color:var(--negro); opacity:.5; cursor:pointer; line-height:1;}
+  .order-close:hover{opacity:1;}
+  .order-modal h3{font-size:22px; margin-bottom:6px;}
+  .order-modal .order-sub{font-family:var(--sans); font-size:13px; color:#6b6558; margin-bottom:26px; line-height:1.6;}
+  .order-field{margin-bottom:16px;}
+  .order-field label{display:block; font-family:var(--sans); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:#8a8474; margin-bottom:6px;}
+  .order-field input, .order-field select, .order-field textarea{
+    width:100%; font-family:var(--sans); font-size:14px; color:var(--negro); background:#fff;
+    border:1px solid rgba(28,26,23,0.18); border-radius:3px; padding:11px 13px; transition:border-color .2s ease;
+  }
+  .order-field input:focus, .order-field select:focus, .order-field textarea:focus{outline:none; border-color:var(--naranja);}
+  .order-field textarea{resize:vertical; min-height:64px;}
+  .order-row{display:grid; grid-template-columns:2fr 1fr; gap:12px;}
+  .order-modal .btn{width:100%; margin-top:6px; border:0;}
+  .order-note{font-family:var(--sans); font-size:11.5px; color:#8a8474; margin-top:14px; line-height:1.6;}
+  .order-total{font-family:var(--sans); font-size:13px; color:var(--negro); background:#fff; border:1px solid rgba(28,26,23,0.12); border-radius:3px; padding:12px 14px; margin-bottom:14px;}
+  .order-total strong{color:var(--naranja); font-family:var(--serif); font-size:15px;}
+  .order-done{display:none; text-align:center; padding:12px 0;}
+  .order-done.show{display:block;}
+  .order-done h3{margin-bottom:12px;}
+  .order-done p{font-family:var(--sans); font-size:14px; color:#6b6558; line-height:1.7;}
+
   .newsletter{background:var(--negro); color:var(--crema); text-align:center;}
   .newsletter h2{color:var(--crema); font-size:clamp(26px,3.4vw,40px); max-width:640px; margin:0 auto 16px;}
   .newsletter p{font-weight:300; opacity:.75; max-width:480px; margin:0 auto 34px;}
@@ -250,6 +315,14 @@
 </head>
 <body>
 
+
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="intro-flores"></div>
+  <span class="intro-bottle-wrap"><img class="intro-bottle" src="assets/bottle-hd.webp" alt=""></span>
+  <span class="intro-line"></span>
+  <span class="intro-name">Licor Café de Las Horas</span>
+  <button class="intro-skip" type="button" id="introSkip">Saltar</button>
+</div>
 
 <header id="siteHeader">
   <a href="#top" class="logo-mark">
@@ -276,7 +349,7 @@
     <h1 class="fade">30 años de historia, resumidos en un solo licor.</h1>
     <p class="fade">Nacido para la auténtica Agua de Valencia. Creado para inspirar mucho más.</p>
     <div class="cta-row fade">
-      <a href="https://www.licorcafedelashoras.com/products/licor-cafe-de-las-horas" target="_blank" rel="noopener" class="btn btn-solid on-dark">Comprar</a>
+      <button type="button" class="btn btn-solid on-dark js-open-order" data-producto="">Comprar</button>
       <a href="#agua-de-valencia" class="btn btn-outline on-dark">Descubrir la historia</a>
     </div>
   </div>
@@ -293,7 +366,7 @@
       <a href="#" class="btn btn-outline" style="margin-top:12px;">Conoce el licor →</a>
     </div>
     <div class="product-frame fade">
-      <img src="assets/bottle.png" alt="Botella Licor Café de Las Horas">
+      <img src="assets/bottle-md.webp" alt="Botella Licor Café de Las Horas">
     </div>
   </div>
 </section>
@@ -400,21 +473,21 @@
   <div class="wrap">
     <div class="section-head fade">
       <h2>Llévatelo a casa</h2>
-      <a href="https://www.licorcafedelashoras.com/products/licor-cafe-de-las-horas" target="_blank" rel="noopener" class="btn btn-outline">Ver toda la tienda →</a>
+      <button type="button" class="btn btn-outline js-open-order" data-producto="">Ver toda la tienda →</button>
     </div>
     <div class="shop-grid fade">
       <div class="shop-card">
         <span class="badge">Más vendido</span>
         <div class="shop-img"><img src="assets/bottle.png" alt="Botella 700ml"></div>
-        <div class="shop-body"><h3>Botella 700ml</h3><div class="price">25,00 €</div><a href="https://www.licorcafedelashoras.com/products/licor-cafe-de-las-horas" target="_blank" rel="noopener" class="btn btn-outline" style="width:100%; padding:12px;">Añadir</a></div>
+        <div class="shop-body"><h3>Botella 700ml</h3><div class="price">25,00 €</div><button type="button" class="btn btn-outline js-open-order" data-producto="Botella 700ml" style="width:100%; padding:12px;">Añadir</button></div>
       </div>
       <div class="shop-card">
         <div class="shop-img"><img src="assets/bottle.png" alt="Pack 3 botellas"></div>
-        <div class="shop-body"><h3>Pack 3 botellas</h3><div class="price">67,50 €<s>75,00 €</s></div><a href="https://www.licorcafedelashoras.com/products/licor-cafe-de-las-horas" target="_blank" rel="noopener" class="btn btn-outline" style="width:100%; padding:12px;">Añadir</a></div>
+        <div class="shop-body"><h3>Pack 3 botellas</h3><div class="price">67,50 €<s>75,00 €</s></div><button type="button" class="btn btn-outline js-open-order" data-producto="Pack 3 botellas" style="width:100%; padding:12px;">Añadir</button></div>
       </div>
       <div class="shop-card">
         <div class="shop-img"><img src="assets/bottle.png" alt="Pack 6 botellas"></div>
-        <div class="shop-body"><h3>Pack 6 botellas</h3><div class="price">127,50 €<s>150,00 €</s></div><a href="https://www.licorcafedelashoras.com/products/licor-cafe-de-las-horas" target="_blank" rel="noopener" class="btn btn-outline" style="width:100%; padding:12px;">Añadir</a></div>
+        <div class="shop-body"><h3>Pack 6 botellas</h3><div class="price">127,50 €<s>150,00 €</s></div><button type="button" class="btn btn-outline js-open-order" data-producto="Pack 6 botellas" style="width:100%; padding:12px;">Añadir</button></div>
       </div>
     </div>
   </div>
@@ -482,15 +555,163 @@
   </div>
 </footer>
 
+<div class="order-overlay" id="orderOverlay">
+  <div class="order-modal">
+    <button type="button" class="order-close" id="orderClose" aria-label="Cerrar">✕</button>
+
+    <form id="orderForm">
+      <h3>Hacer un pedido</h3>
+      <p class="order-sub">Completa tus datos. Te va a llegar un email a tu propia dirección con el total, el IBAN para hacer la transferencia y los pasos a seguir. Envíos a toda la Unión Europea en 48h desde que confirmamos el pago.</p>
+
+      <div class="order-field">
+        <label for="ordProducto">Producto</label>
+        <select id="ordProducto" name="producto" required>
+          <option value="" disabled selected>Elige un producto</option>
+          <option value="Botella 700ml" data-precio="25.00">Botella 700ml — 25,00 €</option>
+          <option value="Pack 3 botellas" data-precio="67.50">Pack 3 botellas — 67,50 €</option>
+          <option value="Pack 6 botellas" data-precio="127.50">Pack 6 botellas — 127,50 €</option>
+        </select>
+      </div>
+
+      <div class="order-row">
+        <div class="order-field">
+          <label for="ordNombre">Nombre completo</label>
+          <input type="text" id="ordNombre" name="nombre" required>
+        </div>
+        <div class="order-field">
+          <label for="ordCantidad">Cantidad</label>
+          <input type="number" id="ordCantidad" name="cantidad" min="1" value="1" required>
+        </div>
+      </div>
+
+      <div class="order-field">
+        <label for="ordEmail">Tu email</label>
+        <input type="email" id="ordEmail" name="email" required>
+      </div>
+
+      <div class="order-field">
+        <label for="ordTelefono">Teléfono de contacto</label>
+        <input type="tel" id="ordTelefono" name="telefono" required>
+      </div>
+
+      <div class="order-field">
+        <label for="ordDireccion">Dirección de envío completa</label>
+        <textarea id="ordDireccion" name="direccion" placeholder="Calle, número, ciudad, código postal, país" required></textarea>
+      </div>
+
+      <div class="order-field">
+        <label for="ordNotas">Notas (opcional)</label>
+        <textarea id="ordNotas" name="notas"></textarea>
+      </div>
+
+      <div class="order-total" id="ordTotal" style="display:none;">Total: <strong id="ordTotalCifra">—</strong></div>
+
+      <button type="submit" class="btn btn-solid">Recibir el IBAN por email</button>
+      <p class="order-note">Al enviar se abre tu programa de correo con un email dirigido a vos mismo, con el pedido, el total y el IBAN. Solo tenés que darle a enviar. Cuando hagas la transferencia, respondé ese mismo email adjuntando el comprobante de pago.</p>
+    </form>
+
+    <div class="order-done" id="orderDone">
+      <h3>¡Listo!</h3>
+      <p>Revisá tu programa de correo: te dejamos un email redactado, dirigido a vos, con el pedido, el total y el IBAN. Dale a enviar para tenerlo guardado, y respondelo con el comprobante en cuanto hagas la transferencia. Si no se abrió, escribinos a <a href="mailto:comercial@licorlashoras.com" style="color:var(--naranja);">comercial@licorlashoras.com</a> con tus datos.</p>
+    </div>
+  </div>
+</div>
+
 <script>
   const header = document.getElementById('siteHeader');
   window.addEventListener('scroll', () => {
     header.classList.toggle('scrolled', window.scrollY > 40);
   });
+  // Intro: la botella entra, brilla y la cortina sube. Solo la primera vez por sesión.
+  const intro = document.getElementById('intro');
+  let introFinished = !document.documentElement.classList.contains('intro-on');
+  const heroFades = document.querySelectorAll('.hero .fade');
+  function finishIntro(){
+    if(introFinished) return; introFinished = true;
+    try{ sessionStorage.setItem('introSeen','1'); }catch(e){}
+    intro.classList.add('leaving');
+    document.documentElement.classList.remove('intro-on');
+    setTimeout(()=>heroFades.forEach(el=>el.classList.add('in')), 500);
+    setTimeout(()=>intro.remove(), 2000);
+  }
+  if(!introFinished){
+    setTimeout(finishIntro, 3600);
+    intro.addEventListener('click', finishIntro);
+  }
   const io = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+    entries.forEach(e=>{
+      if(!e.isIntersecting) return;
+      if(!introFinished && e.target.closest('.hero')) return; // el hero espera a la intro
+      e.target.classList.add('in');
+    });
   }, {threshold:0.15});
   document.querySelectorAll('.fade').forEach(el=>io.observe(el));
+
+  // Pedido: abrir/cerrar el formulario, calcular el total y enviar el email con el IBAN
+  const orderOverlay = document.getElementById('orderOverlay');
+  const orderForm = document.getElementById('orderForm');
+  const orderDone = document.getElementById('orderDone');
+  const ordProducto = document.getElementById('ordProducto');
+  const ordCantidad = document.getElementById('ordCantidad');
+  const ordTotal = document.getElementById('ordTotal');
+  const ordTotalCifra = document.getElementById('ordTotalCifra');
+  const IBAN = 'ES38 3159 0066 9528 6026 0922';
+  const TITULAR = 'MRIK DRINKS, SOCIEDAD LIMITADA';
+  function euros(n){ return n.toLocaleString('es-ES',{minimumFractionDigits:2, maximumFractionDigits:2}) + ' €'; }
+  function actualizarTotal(){
+    const opt = ordProducto.selectedOptions[0];
+    const precio = opt ? parseFloat(opt.dataset.precio) : NaN;
+    const cant = parseInt(ordCantidad.value, 10) || 0;
+    if(!precio || !cant){ ordTotal.style.display = 'none'; return; }
+    ordTotalCifra.textContent = euros(precio * cant);
+    ordTotal.style.display = '';
+  }
+  ordProducto.addEventListener('change', actualizarTotal);
+  ordCantidad.addEventListener('input', actualizarTotal);
+  function openOrder(producto){
+    orderForm.style.display = '';
+    orderDone.classList.remove('show');
+    if(producto) ordProducto.value = producto;
+    actualizarTotal();
+    orderOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeOrder(){
+    orderOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.querySelectorAll('.js-open-order').forEach(btn=>{
+    btn.addEventListener('click', ()=> openOrder(btn.dataset.producto));
+  });
+  document.getElementById('orderClose').addEventListener('click', closeOrder);
+  orderOverlay.addEventListener('click', (e)=>{ if(e.target === orderOverlay) closeOrder(); });
+  orderForm.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const d = Object.fromEntries(new FormData(orderForm).entries());
+    const precio = parseFloat(ordProducto.selectedOptions[0].dataset.precio);
+    const cant = parseInt(d.cantidad, 10) || 1;
+    const total = euros(precio * cant);
+    const cuerpo = `Hola ${d.nombre},\n\n`
+      + `Este es el resumen de tu pedido en Licor Café de Las Horas:\n\n`
+      + `Producto: ${d.producto}\n`
+      + `Cantidad: ${d.cantidad}\n`
+      + `Total: ${total}\n\n`
+      + `Teléfono de contacto: ${d.telefono}\n`
+      + `Dirección de envío: ${d.direccion}`
+      + (d.notas ? `\nNotas: ${d.notas}` : '')
+      + `\n\nPara completar el pedido, hacé una transferencia por ${total} a:\n\n`
+      + `Titular: ${TITULAR}\n`
+      + `IBAN: ${IBAN}\n\n`
+      + `Cuando la hayas hecho, respondé este mismo email adjuntando el comprobante de pago y preparamos el envío.\n`
+      + `Envíos a toda la Unión Europea en 48h desde que confirmamos el pago recibido.`;
+    const asunto = `Tu pedido — ${d.producto} — ${total}`;
+    window.location.href = 'mailto:' + encodeURIComponent(d.email)
+      + '?bcc=comercial@licorlashoras.com'
+      + '&subject=' + encodeURIComponent(asunto)
+      + '&body=' + encodeURIComponent(cuerpo);
+    orderForm.style.display = 'none';
+    orderDone.classList.add('show');
+  });
 </script>
 
 </body>

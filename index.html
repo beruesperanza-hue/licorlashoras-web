@@ -288,6 +288,9 @@
   .order-note{font-family:var(--sans); font-size:11.5px; color:#8a8474; margin-top:14px; line-height:1.6;}
   .order-total{font-family:var(--sans); font-size:13px; color:var(--negro); background:#fff; border:1px solid rgba(28,26,23,0.12); border-radius:3px; padding:12px 14px; margin-bottom:14px;}
   .order-total strong{color:var(--naranja); font-family:var(--serif); font-size:15px;}
+  .order-error{display:none; font-family:var(--sans); font-size:12.5px; color:#a4392a; margin-top:10px; line-height:1.6;}
+  .order-error.show{display:block;}
+  .order-modal .btn:disabled{opacity:.55; cursor:default;}
   .order-done{display:none; text-align:center; padding:12px 0;}
   .order-done.show{display:block;}
   .order-done h3{margin-bottom:12px;}
@@ -606,13 +609,14 @@
 
       <div class="order-total" id="ordTotal" style="display:none;">Total: <strong id="ordTotalCifra">—</strong></div>
 
-      <button type="submit" class="btn btn-solid">Recibir el IBAN por email</button>
-      <p class="order-note">Al enviar se abre tu programa de correo con un email dirigido a vos mismo, con el pedido, el total y el IBAN. Solo tenés que darle a enviar. Cuando hagas la transferencia, respondé ese mismo email adjuntando el comprobante de pago.</p>
+      <button type="submit" class="btn btn-solid" id="ordSubmit">Confirmar pedido</button>
+      <p class="order-error" id="ordError"></p>
+      <p class="order-note">Al confirmar te llega un email automático con el pedido, el total y el IBAN. Cuando hagas la transferencia, respondé ese mismo email adjuntando el comprobante de pago.</p>
     </form>
 
     <div class="order-done" id="orderDone">
-      <h3>¡Listo!</h3>
-      <p>Revisá tu programa de correo: te dejamos un email redactado, dirigido a vos, con el pedido, el total y el IBAN. Dale a enviar para tenerlo guardado, y respondelo con el comprobante en cuanto hagas la transferencia. Si no se abrió, escribinos a <a href="mailto:comercial@licorlashoras.com" style="color:var(--naranja);">comercial@licorlashoras.com</a> con tus datos.</p>
+      <h3>¡Pedido confirmado!</h3>
+      <p>Te acabamos de mandar un email con el resumen del pedido, el total y el IBAN para hacer la transferencia. Respondé ese email con el comprobante de pago en cuanto la hagas. Si no te llega en unos minutos (revisá spam), escribinos a <a href="mailto:comercial@licorlashoras.com" style="color:var(--naranja);">comercial@licorlashoras.com</a>.</p>
     </div>
   </div>
 </div>
@@ -655,8 +659,6 @@
   const ordCantidad = document.getElementById('ordCantidad');
   const ordTotal = document.getElementById('ordTotal');
   const ordTotalCifra = document.getElementById('ordTotalCifra');
-  const IBAN = 'ES38 3159 0066 9528 6026 0922';
-  const TITULAR = 'MRIK DRINKS, SOCIEDAD LIMITADA';
   function euros(n){ return n.toLocaleString('es-ES',{minimumFractionDigits:2, maximumFractionDigits:2}) + ' €'; }
   function actualizarTotal(){
     const opt = ordProducto.selectedOptions[0];
@@ -685,32 +687,41 @@
   });
   document.getElementById('orderClose').addEventListener('click', closeOrder);
   orderOverlay.addEventListener('click', (e)=>{ if(e.target === orderOverlay) closeOrder(); });
-  orderForm.addEventListener('submit', (e)=>{
+  const ordSubmit = document.getElementById('ordSubmit');
+  const ordError = document.getElementById('ordError');
+  const PEDIDOS_API = 'https://crm-app-production-bb80.up.railway.app/api/tienda/pedido';
+  orderForm.addEventListener('submit', async (e)=>{
     e.preventDefault();
     const d = Object.fromEntries(new FormData(orderForm).entries());
-    const precio = parseFloat(ordProducto.selectedOptions[0].dataset.precio);
-    const cant = parseInt(d.cantidad, 10) || 1;
-    const total = euros(precio * cant);
-    const cuerpo = `Hola ${d.nombre},\n\n`
-      + `Este es el resumen de tu pedido en Licor Café de Las Horas:\n\n`
-      + `Producto: ${d.producto}\n`
-      + `Cantidad: ${d.cantidad}\n`
-      + `Total: ${total}\n\n`
-      + `Teléfono de contacto: ${d.telefono}\n`
-      + `Dirección de envío: ${d.direccion}`
-      + (d.notas ? `\nNotas: ${d.notas}` : '')
-      + `\n\nPara completar el pedido, hacé una transferencia por ${total} a:\n\n`
-      + `Titular: ${TITULAR}\n`
-      + `IBAN: ${IBAN}\n\n`
-      + `Cuando la hayas hecho, respondé este mismo email adjuntando el comprobante de pago y preparamos el envío.\n`
-      + `Envíos a toda la Unión Europea en 48h desde que confirmamos el pago recibido.`;
-    const asunto = `Tu pedido — ${d.producto} — ${total}`;
-    window.location.href = 'mailto:' + encodeURIComponent(d.email)
-      + '?bcc=comercial@licorlashoras.com'
-      + '&subject=' + encodeURIComponent(asunto)
-      + '&body=' + encodeURIComponent(cuerpo);
-    orderForm.style.display = 'none';
-    orderDone.classList.add('show');
+    const precioUnitario = parseFloat(ordProducto.selectedOptions[0].dataset.precio);
+    ordError.classList.remove('show');
+    ordSubmit.disabled = true;
+    ordSubmit.textContent = 'Enviando…';
+    try {
+      const res = await fetch(PEDIDOS_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          producto: d.producto,
+          precioUnitario,
+          cantidad: d.cantidad,
+          nombre: d.nombre,
+          email: d.email,
+          telefono: d.telefono,
+          direccion: d.direccion,
+          notas: d.notas,
+        }),
+      });
+      if(!res.ok) throw new Error((await res.json().catch(()=>({}))).error || 'No se pudo confirmar el pedido');
+      orderForm.style.display = 'none';
+      orderDone.classList.add('show');
+    } catch(err) {
+      ordError.textContent = 'No pudimos confirmar el pedido (' + err.message + '). Probá de nuevo, o escribinos a comercial@licorlashoras.com.';
+      ordError.classList.add('show');
+    } finally {
+      ordSubmit.disabled = false;
+      ordSubmit.textContent = 'Confirmar pedido';
+    }
   });
 </script>
 

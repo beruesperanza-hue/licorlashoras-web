@@ -564,7 +564,7 @@
 
     <form id="orderForm">
       <h3>Hacer un pedido</h3>
-      <p class="order-sub">Completa tus datos. Te va a llegar un email a tu propia dirección con el total, el IBAN para hacer la transferencia y los pasos a seguir. Envíos a toda la Unión Europea en 48h desde que confirmamos el pago.</p>
+      <p class="order-sub">Completa tus datos. Te va a llegar un email con el pedido y el IBAN. El total no incluye gastos de envío — te confirmamos el importe final según tu dirección antes de la transferencia. Envíos a toda la Unión Europea en 48h desde que confirmamos el pago.</p>
 
       <div class="order-field">
         <label for="ordProducto">Producto</label>
@@ -607,7 +607,10 @@
         <textarea id="ordNotas" name="notas"></textarea>
       </div>
 
-      <div class="order-total" id="ordTotal" style="display:none;">Total: <strong id="ordTotalCifra">—</strong></div>
+      <div class="order-total" id="ordTotal" style="display:none;">
+        Total: <strong id="ordTotalCifra">—</strong>
+        <div style="font-weight:400; color:#8a8474; margin-top:4px;">+ gastos de envío según dirección — te los confirmamos antes de la transferencia.</div>
+      </div>
 
       <button type="submit" class="btn btn-solid" id="ordSubmit">Confirmar pedido</button>
       <p class="order-error" id="ordError"></p>

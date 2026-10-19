@@ -589,7 +589,7 @@
 
     <form id="orderForm">
       <h3>Hacer un pedido</h3>
-      <p class="order-sub">Completa tus datos. Te va a llegar un email con el pedido y el IBAN. Elegí tu país y te mostramos el coste del envío al instante, antes de confirmar. Envíos a toda la Unión Europea en 48h desde que confirmamos el pago.</p>
+      <p class="order-sub">Completa tus datos. Te va a llegar un email con el pedido y el IBAN. Elegí tu país y te mostramos el coste del envío al instante. Envíos a la península con 50 % de descuento. Envíos a toda la Unión Europea en 48h desde que confirmamos el pago.</p>
 
       <div class="order-field">
         <label for="ordProducto">Producto</label>
@@ -775,12 +775,19 @@
     if(pais === 'España') return ordZona.value || null;   // vacío = Canarias, Ceuta o Melilla
     return ZONA_POR_PAIS[pais] || null;
   }
+  // La península lleva 50 % de descuento en el envío.
+  const ZONAS_CON_DESCUENTO = ['es-regional', 'es-nacional'];
   // La tabla cubre 1, 2, 3 y 6 botellas: para más, se suman cajas de 6 y el resto.
-  function costeEnvio(zona, botellas){
+  function costeEnvioBase(zona, botellas){
     const filas = TARIFAS_ENVIO[zona].filas;
     let restantes = Math.max(1, botellas), total = 0;
     while(restantes >= 6){ total += filas[6]; restantes -= 6; }
     if(restantes > 0) total += restantes <= 3 ? filas[restantes] : filas[6];
+    return Math.round(total * 100) / 100;
+  }
+  function costeEnvio(zona, botellas){
+    const base = costeEnvioBase(zona, botellas);
+    const total = ZONAS_CON_DESCUENTO.indexOf(zona) !== -1 ? base * 0.5 : base;
     return Math.round(total * 100) / 100;
   }
   function botellasDe(producto){
@@ -797,15 +804,27 @@
 
     const totalProducto = precio * cant;
     const zona = zonaElegida();
-    const envio = zona ? costeEnvio(zona, botellasDe(opt.value) * cant) : 0;
+    const botellas = botellasDe(opt.value) * cant;
+    const envio = zona ? costeEnvio(zona, botellas) : 0;
 
     ordTotalProducto.textContent = euros(totalProducto);
     if(!ordPais.value){
       ordTotalEnvio.textContent = 'elige tu país';
       ordEnvioNota.textContent = 'Elegí tu país y te calculamos el envío al instante.';
+    } else if(zona && ZONAS_CON_DESCUENTO.indexOf(zona) !== -1){
+      // Península: se muestra el precio tachado para que se vea el descuento.
+      ordTotalEnvio.innerHTML = '<span style="text-decoration:line-through; opacity:.55; font-weight:400;">' +
+        euros(costeEnvioBase(zona, botellas)) + '</span> ' + euros(envio) +
+        ' <span style="font-weight:400; color:#b0843e;">−50 %</span>';
+      ordEnvioNota.textContent = 'Envío a la península con 50 % de descuento, caja e IVA incluidos.';
     } else if(zona){
+      // Fuera de España se muestra el coste por botella: a partir de 3 baja mucho.
+      const porBotella = envio / botellas;
       ordTotalEnvio.textContent = euros(envio) + ' · ' + TARIFAS_ENVIO[zona].etiqueta;
-      ordEnvioNota.textContent = 'Envío con seguimiento, caja incluida e IVA incluido.';
+      ordEnvioNota.innerHTML = '<strong style="color:#b0843e;">' + euros(porBotella) + ' por botella</strong>' +
+        (botellas < 3 ? ' — con 3 botellas baja a ' + euros(costeEnvio(zona, 3) / 3) +
+          ' y con 6, a ' + euros(costeEnvio(zona, 6) / 6) + ' por botella.'
+         : ' — cuantas más botellas, menos envío por botella.');
     } else {
       ordTotalEnvio.textContent = 'te lo confirmamos por email';
       ordEnvioNota.textContent = 'Para esa zona calculamos el envío a mano y te lo confirmamos antes de la transferencia.';

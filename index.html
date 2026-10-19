@@ -589,7 +589,7 @@
 
     <form id="orderForm">
       <h3>Hacer un pedido</h3>
-      <p class="order-sub">Completa tus datos. Te va a llegar un email con el pedido y el IBAN. El total no incluye gastos de envío — te confirmamos el importe final según tu dirección antes de la transferencia. Envíos a toda la Unión Europea en 48h desde que confirmamos el pago.</p>
+      <p class="order-sub">Completa tus datos. Te va a llegar un email con el pedido y el IBAN. Elegí tu país y te mostramos el coste del envío al instante, antes de confirmar. Envíos a toda la Unión Europea en 48h desde que confirmamos el pago.</p>
 
       <div class="order-field">
         <label for="ordProducto">Producto</label>
@@ -601,6 +601,53 @@
         </select>
       </div>
 
+
+      <div class="order-row">
+        <div class="order-field">
+          <label for="ordPais">País de envío</label>
+          <select id="ordPais" name="pais" required>
+            <option value="" disabled selected>Elige tu país</option>
+            <option value="España">España</option>
+            <option value="Portugal">Portugal</option>
+            <option value="Francia">Francia</option>
+            <option value="Bélgica">Bélgica</option>
+            <option value="Países Bajos">Países Bajos</option>
+            <option value="Luxemburgo">Luxemburgo</option>
+            <option value="Alemania">Alemania</option>
+            <option value="Italia">Italia</option>
+            <option value="Reino Unido">Reino Unido</option>
+            <option value="Austria">Austria</option>
+            <option value="Dinamarca">Dinamarca</option>
+            <option value="Finlandia">Finlandia</option>
+            <option value="Grecia">Grecia</option>
+            <option value="Irlanda">Irlanda</option>
+            <option value="Suecia">Suecia</option>
+            <option value="Noruega">Noruega</option>
+            <option value="Suiza">Suiza</option>
+            <option value="Polonia">Polonia</option>
+            <option value="Chequia">Chequia</option>
+            <option value="Hungría">Hungría</option>
+            <option value="Rumanía">Rumanía</option>
+            <option value="Bulgaria">Bulgaria</option>
+            <option value="Croacia">Croacia</option>
+            <option value="Eslovenia">Eslovenia</option>
+            <option value="Eslovaquia">Eslovaquia</option>
+            <option value="Estonia">Estonia</option>
+            <option value="Letonia">Letonia</option>
+            <option value="Lituania">Lituania</option>
+            <option value="Otro país">Otro país</option>
+          </select>
+        </div>
+        <div class="order-field" id="ordZonaCampo" style="display:none;">
+          <label for="ordZona">¿Desde qué zona?</label>
+          <select id="ordZona" name="zona">
+            <option value="es-regional">Valencia, Castellón o Alicante</option>
+            <option value="es-nacional">Resto de la península</option>
+            <option value="es-baleares">Baleares</option>
+            <option value="">Canarias, Ceuta o Melilla</option>
+          </select>
+        </div>
+      </div>
       <div class="order-row">
         <div class="order-field">
           <label for="ordNombre">Nombre completo</label>
@@ -633,8 +680,10 @@
       </div>
 
       <div class="order-total" id="ordTotal" style="display:none;">
-        Total: <strong id="ordTotalCifra">—</strong>
-        <div style="font-weight:400; color:#8a8474; margin-top:4px;">+ gastos de envío según dirección — te los confirmamos antes de la transferencia.</div>
+        <div style="font-weight:400; color:#8a8474;">Producto: <strong id="ordTotalProducto" style="color:inherit;">—</strong></div>
+        <div style="font-weight:400; color:#8a8474; margin-top:2px;">Envío: <strong id="ordTotalEnvio" style="color:inherit;">elige tu país</strong></div>
+        <div style="margin-top:6px;">Total: <strong id="ordTotalCifra">—</strong></div>
+        <div style="font-weight:400; color:#8a8474; margin-top:4px;" id="ordEnvioNota">El envío se calcula con las tarifas vigentes; si tu dirección tuviera algún recargo, te avisamos antes de la transferencia.</div>
       </div>
 
       <button type="submit" class="btn btn-solid" id="ordSubmit">Confirmar pedido</button>
@@ -691,16 +740,85 @@
   const ordCantidad = document.getElementById('ordCantidad');
   const ordTotal = document.getElementById('ordTotal');
   const ordTotalCifra = document.getElementById('ordTotalCifra');
+
+  // Tarifas de envío (total con IVA: transporte + caja) de la planilla TAB-2026.
+  // Filas disponibles: 1, 2, 3 y 6 botellas.
+  const TARIFAS_ENVIO = {
+    'es-regional':       { etiqueta: 'Valencia, Castellón y Alicante',                        filas: {1:12.51, 2:13.09, 3:14.75, 6:18.52} },
+    'es-nacional':       { etiqueta: 'Resto de la península',                                 filas: {1:13.33, 2:13.92, 3:15.61, 6:19.50} },
+    'es-baleares':       { etiqueta: 'Baleares',                                              filas: {1:22.24, 2:22.82, 3:24.97, 6:30.22} },
+    'pt':                { etiqueta: 'Portugal',                                              filas: {1:19.34, 2:19.92, 3:21.92, 6:28.21} },
+    'be-fr-nl-lu':       { etiqueta: 'Bélgica, Francia, Países Bajos y Luxemburgo',           filas: {1:27.56, 2:32.11, 3:34.74, 6:45.62} },
+    'de-it-uk':          { etiqueta: 'Alemania, Italia y Reino Unido',                        filas: {1:29.63, 2:37.52, 3:40.42, 6:57.58} },
+    'at-dk-fi-gr-ie-se': { etiqueta: 'Austria, Dinamarca, Finlandia, Grecia, Irlanda y Suecia', filas: {1:41.33, 2:41.15, 3:44.24, 6:63.05} },
+    'no-ch':             { etiqueta: 'Noruega y Suiza',                                       filas: {1:41.33, 2:41.15, 3:44.24, 6:63.05} },
+    'resto-ue':          { etiqueta: 'Resto de la Unión Europea',                             filas: {1:39.13, 2:55.74, 3:62.14, 6:80.99} }
+  };
+  const ZONA_POR_PAIS = {
+    'Portugal':'pt', 'Francia':'be-fr-nl-lu', 'Bélgica':'be-fr-nl-lu', 'Países Bajos':'be-fr-nl-lu', 'Luxemburgo':'be-fr-nl-lu',
+    'Alemania':'de-it-uk', 'Italia':'de-it-uk', 'Reino Unido':'de-it-uk',
+    'Austria':'at-dk-fi-gr-ie-se', 'Dinamarca':'at-dk-fi-gr-ie-se', 'Finlandia':'at-dk-fi-gr-ie-se', 'Grecia':'at-dk-fi-gr-ie-se',
+    'Irlanda':'at-dk-fi-gr-ie-se', 'Suecia':'at-dk-fi-gr-ie-se', 'Noruega':'no-ch', 'Suiza':'no-ch',
+    'Polonia':'resto-ue', 'Chequia':'resto-ue', 'Hungría':'resto-ue', 'Rumanía':'resto-ue', 'Bulgaria':'resto-ue',
+    'Croacia':'resto-ue', 'Eslovenia':'resto-ue', 'Eslovaquia':'resto-ue', 'Estonia':'resto-ue', 'Letonia':'resto-ue', 'Lituania':'resto-ue'
+  };
+  const ordPais = document.getElementById('ordPais');
+  const ordZona = document.getElementById('ordZona');
+  const ordZonaCampo = document.getElementById('ordZonaCampo');
+  const ordTotalProducto = document.getElementById('ordTotalProducto');
+  const ordTotalEnvio = document.getElementById('ordTotalEnvio');
+  const ordEnvioNota = document.getElementById('ordEnvioNota');
+
+  function zonaElegida(){
+    const pais = ordPais.value;
+    if(!pais) return null;
+    if(pais === 'España') return ordZona.value || null;   // vacío = Canarias, Ceuta o Melilla
+    return ZONA_POR_PAIS[pais] || null;
+  }
+  // La tabla cubre 1, 2, 3 y 6 botellas: para más, se suman cajas de 6 y el resto.
+  function costeEnvio(zona, botellas){
+    const filas = TARIFAS_ENVIO[zona].filas;
+    let restantes = Math.max(1, botellas), total = 0;
+    while(restantes >= 6){ total += filas[6]; restantes -= 6; }
+    if(restantes > 0) total += restantes <= 3 ? filas[restantes] : filas[6];
+    return Math.round(total * 100) / 100;
+  }
+  function botellasDe(producto){
+    const m = (producto || '').match(/(\d+)\s*botellas/i);
+    return m ? parseInt(m[1], 10) : 1;
+  }
+
   function euros(n){ return n.toLocaleString('es-ES',{minimumFractionDigits:2, maximumFractionDigits:2}) + ' €'; }
   function actualizarTotal(){
     const opt = ordProducto.selectedOptions[0];
     const precio = opt ? parseFloat(opt.dataset.precio) : NaN;
     const cant = parseInt(ordCantidad.value, 10) || 0;
     if(!precio || !cant){ ordTotal.style.display = 'none'; return; }
-    ordTotalCifra.textContent = euros(precio * cant);
+
+    const totalProducto = precio * cant;
+    const zona = zonaElegida();
+    const envio = zona ? costeEnvio(zona, botellasDe(opt.value) * cant) : 0;
+
+    ordTotalProducto.textContent = euros(totalProducto);
+    if(!ordPais.value){
+      ordTotalEnvio.textContent = 'elige tu país';
+      ordEnvioNota.textContent = 'Elegí tu país y te calculamos el envío al instante.';
+    } else if(zona){
+      ordTotalEnvio.textContent = euros(envio) + ' · ' + TARIFAS_ENVIO[zona].etiqueta;
+      ordEnvioNota.textContent = 'Envío con seguimiento, caja incluida e IVA incluido.';
+    } else {
+      ordTotalEnvio.textContent = 'te lo confirmamos por email';
+      ordEnvioNota.textContent = 'Para esa zona calculamos el envío a mano y te lo confirmamos antes de la transferencia.';
+    }
+    ordTotalCifra.textContent = euros(totalProducto + envio);
     ordTotal.style.display = '';
   }
   ordProducto.addEventListener('change', actualizarTotal);
+  ordPais.addEventListener('change', function(){
+    ordZonaCampo.style.display = ordPais.value === 'España' ? '' : 'none';
+    actualizarTotal();
+  });
+  ordZona.addEventListener('change', actualizarTotal);
   ordCantidad.addEventListener('input', actualizarTotal);
   function openOrder(producto){
     orderForm.style.display = '';
@@ -742,6 +860,8 @@
           telefono: d.telefono,
           direccion: d.direccion,
           notas: d.notas,
+          pais: d.pais,
+          zonaEnvio: zonaElegida(),
         }),
       });
       if(!res.ok) throw new Error((await res.json().catch(()=>({}))).error || 'No se pudo confirmar el pedido');

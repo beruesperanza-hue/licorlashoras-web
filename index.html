@@ -7,7 +7,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script>document.documentElement.classList.add('az-on');</script>
+<script>
+  document.documentElement.classList.add('az-on');
+  // El navegador recuerda dónde quedó la página y, al volver, la abre a mitad (p. ej. en
+  // los cócteles). Con esto siempre se entra por el principio, salvo que el enlace lleve #seccion.
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+</script>
 <style>
   :root{
     --naranja:#D9622B;
@@ -645,6 +650,14 @@
 </div>
 
 <script>
+
+  // Refuerzo: algunos navegadores restauran el scroll después de cargar las imágenes.
+  if (!location.hash) {
+    window.addEventListener('load', function () {
+      window.scrollTo(0, 0);
+      setTimeout(function () { if (!location.hash) window.scrollTo(0, 0); }, 300);
+    });
+  }
   const header = document.getElementById('siteHeader');
   window.addEventListener('scroll', () => {
     header.classList.toggle('scrolled', window.scrollY > 40);

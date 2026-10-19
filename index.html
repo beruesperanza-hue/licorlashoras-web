@@ -336,9 +336,42 @@
   .foot-col a:hover{color:var(--naranja);}
   .foot-bottom{display:flex; justify-content:space-between; padding-top:24px; font-size:12px; color:#8a8474; flex-wrap:wrap; gap:12px;}
 
+
+  /* Verificación de edad: aparece al terminar la cortina y bloquea la web hasta responder. */
+  .edad-gate{position:fixed; inset:0; z-index:9000; display:none; align-items:center; justify-content:center;
+    background:rgba(20,14,8,.92); backdrop-filter:blur(6px); padding:24px;}
+  .edad-gate.on{display:flex;}
+  html.edad-bloqueada{overflow:hidden;}
+  .edad-caja{max-width:440px; width:100%; background:var(--crema); border-radius:4px; padding:42px 38px; text-align:center;
+    box-shadow:0 30px 80px rgba(0,0,0,.45);}
+  .edad-caja img{width:62px; margin:0 auto 18px; display:block;}
+  .edad-caja h2{font-family:var(--serif); font-size:26px; color:var(--negro); margin-bottom:10px;}
+  .edad-caja p{font-size:14px; line-height:1.6; color:#6b6355; margin-bottom:26px;}
+  .edad-botones{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .edad-botones button{font-family:var(--sans); font-size:12px; letter-spacing:.18em; text-transform:uppercase;
+    padding:14px 26px; border-radius:3px; cursor:pointer; border:1px solid var(--negro); transition:opacity .2s ease;}
+  .edad-botones button:hover{opacity:.8;}
+  .edad-si{background:var(--negro); color:var(--crema);}
+  .edad-no{background:transparent; color:var(--negro);}
+  .edad-rechazo{display:none; font-size:14px; line-height:1.6; color:#8a6b2f;}
+  .edad-gate.rechazada .edad-botones, .edad-gate.rechazada > .edad-caja > p:first-of-type{display:none;}
+  .edad-gate.rechazada .edad-rechazo{display:block;}
 </style>
 </head>
 <body>
+<div class="edad-gate" id="edadGate" role="dialog" aria-modal="true" aria-labelledby="edadTitulo">
+  <div class="edad-caja">
+    <img src="assets/logo.png" alt="Licor Café de Las Horas">
+    <h2 id="edadTitulo">¿Eres mayor de 18 años?</h2>
+    <p>Para entrar en esta web tienes que tener la edad legal para consumir alcohol en tu país.</p>
+    <div class="edad-botones">
+      <button type="button" class="edad-si" id="edadSi">Sí, soy mayor de 18</button>
+      <button type="button" class="edad-no" id="edadNo">No</button>
+    </div>
+    <p class="edad-rechazo">Gracias por tu honestidad. Esta web es solo para mayores de edad.<br>Bebe con moderación.</p>
+  </div>
+</div>
+
 
 
 <div class="az-intro" id="azIntro" aria-hidden="true">
@@ -577,8 +610,12 @@
       </div>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Mrik Drinks, S.L. — Hecho en Valencia</span>
+      <span>Mrik Drinks, S.L. · Almodóvar 1 — Valencia 46008 · comercial@licorlashoras.com · B72506140</span>
       <span>Bebe con moderación. Venta a mayores de 18 años.</span>
+    </div>
+    <div class="foot-bottom" style="border-top:0; padding-top:0;">
+      <span>Información legal: <a href="aviso-legal.html">Aviso legal</a> · <a href="privacidad.html">Política de privacidad</a></span>
+      <span>© 2026 Licor Café de Las Horas — Hecho en Valencia</span>
     </div>
   </div>
 </footer>
@@ -712,6 +749,40 @@
   window.addEventListener('pageshow', function (e) {
     if (e.persisted && !location.hash) window.scrollTo(0, 0);
   });
+
+  // Verificación de edad: se muestra una vez por navegador, al terminar la cortina de azahar.
+  (function(){
+    var gate = document.getElementById('edadGate'), raiz = document.documentElement;
+    if(!gate) return;
+    var yaRespondio = false;
+    try { yaRespondio = localStorage.getItem('mayorDeEdad') === 'si'; } catch(e) {}
+    if(yaRespondio) return;
+
+    function abrir(){
+      gate.classList.add('on');
+      raiz.classList.add('edad-bloqueada');
+      document.getElementById('edadSi').focus();
+    }
+    // Si hay cortina, se espera a que termine; si no, se abre enseguida.
+    if(raiz.classList.contains('az-on')){
+      var esperar = setInterval(function(){
+        if(!raiz.classList.contains('az-on')){ clearInterval(esperar); abrir(); }
+      }, 200);
+      setTimeout(function(){ clearInterval(esperar); if(!gate.classList.contains('on')) abrir(); }, 6000);
+    } else {
+      abrir();
+    }
+
+    document.getElementById('edadSi').addEventListener('click', function(){
+      try { localStorage.setItem('mayorDeEdad', 'si'); } catch(e) {}
+      gate.classList.remove('on');
+      raiz.classList.remove('edad-bloqueada');
+    });
+    document.getElementById('edadNo').addEventListener('click', function(){
+      gate.classList.add('rechazada');
+    });
+  })();
+
   const header = document.getElementById('siteHeader');
   window.addEventListener('scroll', () => {
     header.classList.toggle('scrolled', window.scrollY > 40);

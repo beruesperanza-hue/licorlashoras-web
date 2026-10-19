@@ -683,6 +683,7 @@
         <div style="font-weight:400; color:#8a8474;">Producto: <strong id="ordTotalProducto" style="color:inherit;">—</strong></div>
         <div style="font-weight:400; color:#8a8474; margin-top:2px;">Envío: <strong id="ordTotalEnvio" style="color:inherit;">elige tu país</strong></div>
         <div style="margin-top:6px;">Total: <strong id="ordTotalCifra">—</strong></div>
+        <div style="font-weight:400; color:#2c2318; margin-top:10px; padding-top:10px; border-top:1px solid rgba(138,132,116,.3);" id="ordPorBotella"></div>
         <div style="font-weight:400; color:#8a8474; margin-top:4px;" id="ordEnvioNota">El envío se calcula con las tarifas vigentes; si tu dirección tuviera algún recargo, te avisamos antes de la transferencia.</div>
       </div>
 
@@ -768,6 +769,8 @@
   const ordTotalProducto = document.getElementById('ordTotalProducto');
   const ordTotalEnvio = document.getElementById('ordTotalEnvio');
   const ordEnvioNota = document.getElementById('ordEnvioNota');
+  const ordPorBotella = document.getElementById('ordPorBotella');
+  const PRECIO_BOTELLA_SUELTA = 25;
 
   function zonaElegida(){
     const pais = ordPais.value;
@@ -830,6 +833,15 @@
       ordEnvioNota.textContent = 'Para esa zona calculamos el envío a mano y te lo confirmamos antes de la transferencia.';
     }
     ordTotalCifra.textContent = euros(totalProducto + envio);
+    if(zona){
+      const cadaUna = (totalProducto + envio) / botellas;
+      ordPorBotella.innerHTML = botellas > 1
+        ? 'Precio individual: ' + euros(PRECIO_BOTELLA_SUELTA) + ' por botella. Comprando ' + botellas +
+          ' con el envío incluido te quedan a <strong>' + euros(cadaUna) + ' cada una</strong>.'
+        : 'Con el envío incluido, la botella te sale <strong>' + euros(cadaUna) + '</strong>.';
+    } else {
+      ordPorBotella.innerHTML = '';
+    }
     ordTotal.style.display = '';
   }
   ordProducto.addEventListener('change', actualizarTotal);

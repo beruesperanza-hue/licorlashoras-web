@@ -887,13 +887,8 @@
         ' <span style="font-weight:400; color:#b0843e;">−50 %</span>';
       ordEnvioNota.textContent = 'Envío a la península con 50 % de descuento, caja e IVA incluidos.';
     } else if(zona){
-      // Fuera de España se muestra el coste por botella: a partir de 3 baja mucho.
-      const porBotella = envio / botellas;
       ordTotalEnvio.textContent = euros(envio) + ' · ' + TARIFAS_ENVIO[zona].etiqueta;
-      ordEnvioNota.innerHTML = '<strong style="color:#b0843e;">' + euros(porBotella) + ' por botella</strong>' +
-        (botellas < 3 ? ' — con 3 botellas baja a ' + euros(costeEnvio(zona, 3) / 3) +
-          ' y con 6, a ' + euros(costeEnvio(zona, 6) / 6) + ' por botella.'
-         : ' — cuantas más botellas, menos envío por botella.');
+      ordEnvioNota.textContent = 'Envío con seguimiento, caja e IVA incluidos.';
     } else {
       ordTotalEnvio.textContent = 'te lo confirmamos por email';
       ordEnvioNota.textContent = 'Para esa zona calculamos el envío a mano y te lo confirmamos antes de la transferencia.';

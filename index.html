@@ -754,22 +754,27 @@
   (function(){
     var gate = document.getElementById('edadGate'), raiz = document.documentElement;
     if(!gate) return;
+    var respondido = false, esperar = null, respaldo = null;
     function abrir(){
+      if(respondido) return;
       gate.classList.add('on');
       raiz.classList.add('edad-bloqueada');
       document.getElementById('edadSi').focus();
     }
     // Si hay cortina, se espera a que termine; si no, se abre enseguida.
     if(raiz.classList.contains('az-on')){
-      var esperar = setInterval(function(){
+      esperar = setInterval(function(){
         if(!raiz.classList.contains('az-on')){ clearInterval(esperar); abrir(); }
       }, 200);
-      setTimeout(function(){ clearInterval(esperar); if(!gate.classList.contains('on')) abrir(); }, 6000);
+      // Respaldo por si la cortina no termina de cerrarse sola.
+      respaldo = setTimeout(function(){ clearInterval(esperar); abrir(); }, 6000);
     } else {
       abrir();
     }
 
     document.getElementById('edadSi').addEventListener('click', function(){
+      respondido = true;
+      clearInterval(esperar); clearTimeout(respaldo);
       gate.classList.remove('on');
       raiz.classList.remove('edad-bloqueada');
     });

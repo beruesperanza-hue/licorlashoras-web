@@ -750,14 +750,10 @@
     if (e.persisted && !location.hash) window.scrollTo(0, 0);
   });
 
-  // Verificación de edad: se muestra una vez por navegador, al terminar la cortina de azahar.
+  // Verificación de edad: se muestra en cada visita, al terminar la cortina de azahar.
   (function(){
     var gate = document.getElementById('edadGate'), raiz = document.documentElement;
     if(!gate) return;
-    var yaRespondio = false;
-    try { yaRespondio = localStorage.getItem('mayorDeEdad') === 'si'; } catch(e) {}
-    if(yaRespondio) return;
-
     function abrir(){
       gate.classList.add('on');
       raiz.classList.add('edad-bloqueada');
@@ -774,7 +770,6 @@
     }
 
     document.getElementById('edadSi').addEventListener('click', function(){
-      try { localStorage.setItem('mayorDeEdad', 'si'); } catch(e) {}
       gate.classList.remove('on');
       raiz.classList.remove('edad-bloqueada');
     });

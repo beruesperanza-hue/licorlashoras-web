@@ -711,6 +711,11 @@
         <textarea id="ordDireccion" name="direccion" placeholder="Calle, número, ciudad, código postal, país" required></textarea>
       </div>
 
+      <div aria-hidden="true" style="position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;">
+        <label for="ordWeb">No completar</label>
+        <input type="text" id="ordWeb" name="web" tabindex="-1" autocomplete="off">
+      </div>
+
       <div class="order-field">
         <label for="ordNotas">Notas (opcional)</label>
         <textarea id="ordNotas" name="notas"></textarea>
@@ -959,6 +964,7 @@
           notas: d.notas,
           pais: d.pais,
           zonaEnvio: zonaElegida(),
+          web: d.web,
         }),
       });
       if(!res.ok) throw new Error((await res.json().catch(()=>({}))).error || 'No se pudo confirmar el pedido');

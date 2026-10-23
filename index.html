@@ -716,6 +716,10 @@
         <input type="text" id="ordWeb" name="web" tabindex="-1" autocomplete="off">
       </div>
 
+      <div class="order-field" aria-hidden="true" style="position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;">
+        <label for="ordWeb">No rellenes este campo</label>
+        <input type="text" id="ordWeb" name="web" tabindex="-1" autocomplete="off">
+      </div>
       <div class="order-field">
         <label for="ordNotas">Notas (opcional)</label>
         <textarea id="ordNotas" name="notas"></textarea>
@@ -922,7 +926,9 @@
   });
   ordZona.addEventListener('change', actualizarTotal);
   ordCantidad.addEventListener('input', actualizarTotal);
+  let abiertoEn = 0;
   function openOrder(producto){
+    abiertoEn = Date.now();
     orderForm.style.display = '';
     orderDone.classList.remove('show');
     if(producto) ordProducto.value = producto;
@@ -964,6 +970,8 @@
           notas: d.notas,
           pais: d.pais,
           zonaEnvio: zonaElegida(),
+          web: d.web,
+          segundosEnFormulario: abiertoEn ? Math.round((Date.now() - abiertoEn) / 1000) : null,
           web: d.web,
         }),
       });
